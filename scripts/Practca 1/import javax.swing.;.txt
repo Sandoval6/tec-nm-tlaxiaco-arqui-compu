@@ -1,0 +1,77 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class BaseConverter extends JFrame {
+    private JTextField inputField;
+    private JComboBox<String> baseComboBox;
+    private JLabel binaryLabel, octalLabel, decimalLabel, hexadecimalLabel;
+
+    public BaseConverter() {
+        setTitle("Conversor de Bases Numéricas");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        setLayout(new GridLayout(6, 2, 10, 10));
+
+        JLabel inputLabel = new JLabel("Número:");
+        inputField = new JTextField();
+        add(inputLabel);
+        add(inputField);
+
+        JLabel baseLabel = new JLabel("Base del número:");
+        String[] bases = {"Binario (2)", "Octal (8)", "Decimal (10)", "Hexadecimal (16)"};
+        baseComboBox = new JComboBox<>(bases);
+        add(baseLabel);
+        add(baseComboBox);
+
+        JButton convertButton = new JButton("Convertir");
+        convertButton.addActionListener(new ConvertAction());
+        add(new JLabel()); // Para dejar un espacio
+        add(convertButton);
+
+        binaryLabel = new JLabel("Binario: ");
+        octalLabel = new JLabel("Octal: ");
+        decimalLabel = new JLabel("Decimal: ");
+        hexadecimalLabel = new JLabel("Hexadecimal: ");
+        add(binaryLabel);
+        add(octalLabel);
+        add(decimalLabel);
+        add(hexadecimalLabel);
+    }
+
+    private class ConvertAction implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String input = inputField.getText();
+            int baseIndex = baseComboBox.getSelectedIndex();
+            int base;
+
+            switch (baseIndex) {
+                case 0: base = 2; break;
+                case 1: base = 8; break;
+                case 2: base = 10; break;
+                case 3: base = 16; break;
+                default: base = 10; break;
+            }
+
+            try {
+                int decimalNumber = Integer.parseInt(input, base);
+                binaryLabel.setText("Binario: " + Integer.toBinaryString(decimalNumber));
+                octalLabel.setText("Octal: " + Integer.toOctalString(decimalNumber));
+                decimalLabel.setText("Decimal: " + decimalNumber);
+                hexadecimalLabel.setText("Hexadecimal: " + Integer.toHexString(decimalNumber).toUpperCase());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(BaseConverter.this, "Por favor, ingrese un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new BaseConverter().setVisible(true);
+        });
+    }
+}
